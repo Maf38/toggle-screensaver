@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>ToggleScreensaver</AssemblyName>
+    <RootNamespace>ToggleScreensaver</RootNamespace>
+    <ApplicationIcon>sleep.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="sleep.png" />
+    <None Include="sleep.ico" />
+  </ItemGroup>
+
+</Project>
