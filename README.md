@@ -7,11 +7,15 @@ de l'écran et du système en un clic.
 
 ## Télécharger
 
-[**⬇ Télécharger ToggleScreensaver.exe**](https://github.com/Maf38/toggle-screensaver/releases/latest/download/ToggleScreensaver.exe)
+[**⬇ Télécharger l'installeur (ToggleScreensaver-win-Setup.exe)**](https://github.com/Maf38/toggle-screensaver/releases/latest/download/ToggleScreensaver-win-Setup.exe)
 
-Exécutable autonome pour Windows (x64), aucune installation de .NET requise.
-Il est reconstruit automatiquement à chaque mise à jour de la branche `main`
-(voir [`.github/workflows/release.yml`](.github/workflows/release.yml)).
+Installeur [Velopack](https://velopack.io) pour Windows (x64) : installation par utilisateur
+dans `%LocalAppData%\ToggleScreensaver`, sans droits administrateur ni .NET à installer,
+avec raccourcis Bureau et menu Démarrer.
+L'application **se met à jour toute seule** : elle vérifie les releases GitHub au lancement puis
+toutes les 4 h, télécharge la nouvelle version en arrière-plan et l'installe à la fermeture
+(ou tout de suite via Paramètres → Mises à jour). La désinstallation (Paramètres Windows)
+retire aussi l'entrée de lancement automatique.
 
 ## Fonctionnement
 
@@ -46,8 +50,8 @@ Une seule instance tourne à la fois : relancer l'exécutable ramène la fenêtr
 
 ## Workflow Git
 
-Git flow classique : `main` (releases, déclenche la publication de l'exécutable) et `develop`
-(intégration) sont protégées — pull request obligatoire, check CI `build` requis, pas de
+Git flow classique : `main` (versions livrées) et `develop` (intégration) sont protégées —
+pull request obligatoire, check CI `build` requis (plus `check-tag` pour `main`), pas de
 force-push ni de suppression. Le travail se fait dans des branches `feature/*` créées depuis
 `develop` et fusionnées par PR ; les corrections urgentes passent par `hotfix/*` depuis `main`.
 
@@ -62,11 +66,17 @@ force-push ni de suppression. Le travail se fait dans des branches `feature/*` c
 dotnet run
 ```
 
-Pour produire un exécutable autonome :
+Lancée depuis les sources, l'application fonctionne normalement mais sans mises à jour
+automatiques (réservées à une installation via l'installeur).
 
-```bash
-dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true
-```
+## Publier une version
+
+1. Sur `develop`, poser un tag de version et le pousser : `git tag v1.1.0 && git push origin v1.1.0`.
+   Le workflow [`release.yml`](.github/workflows/release.yml) compile, empaquette avec Velopack
+   (`vpk pack`) et crée la release GitHub (installeur + paquets de mise à jour + notes générées).
+2. Ouvrir une PR `develop` → `main`. Le check `check-tag` refuse la fusion si le commit n'a pas
+   de tag `vX.Y.Z` ; le check `build` compile le projet.
+3. Les installations existantes récupèrent la nouvelle version automatiquement.
 
 ## Structure
 
@@ -80,4 +90,5 @@ dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=
 | `TrayService.cs` / `IconFactory.cs` | Zone de notification et icônes lune/soleil |
 | `HotkeyManager.cs` | Raccourci clavier global |
 | `StartupRegistration.cs` | Lancement avec Windows |
+| `UpdateService.cs` | Mises à jour automatiques (Velopack + releases GitHub) |
 | `sleep.png` / `sleep.ico` | Illustration et icône |

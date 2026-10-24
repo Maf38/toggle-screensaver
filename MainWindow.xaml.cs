@@ -21,8 +21,25 @@ public partial class MainWindow : Window
 
         LoadSettings();
         _app.Sleep.Changed += UpdateUI;
+        _app.Updates.Changed += UpdateUpdateSection;
         UpdateUI();
+        UpdateUpdateSection();
     }
+
+    private void UpdateUpdateSection()
+    {
+        var updates = _app.Updates;
+        VersionLabel.Text = $"Version {updates.CurrentVersion}";
+        UpdateStatusLabel.Text = updates.Status;
+        UpdateStatusLabel.Visibility = updates.Status.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
+        CheckUpdateBtn.IsEnabled = updates.IsInstalled && updates.PendingVersion is null;
+        ApplyUpdateBtn.Visibility = updates.PendingVersion is null ? Visibility.Collapsed : Visibility.Visible;
+    }
+
+    private async void CheckUpdateBtn_Click(object sender, RoutedEventArgs e) =>
+        await _app.Updates.CheckAsync(manual: true);
+
+    private void ApplyUpdateBtn_Click(object sender, RoutedEventArgs e) => _app.Updates.ApplyAndRestart();
 
     private void ToggleBtn_Click(object sender, RoutedEventArgs e) => _app.Sleep.Toggle();
 
