@@ -78,15 +78,8 @@
                     <TextBlock x:Name="StatusLabel"
                                FontSize="13"
                                HorizontalAlignment="Center"
-                               Margin="0,0,0,4"
-                               Foreground="#555"/>
-
-                    <!-- Prochaine bascule automatique -->
-                    <TextBlock x:Name="ScheduleLabel"
-                               FontSize="11.5"
-                               HorizontalAlignment="Center"
                                Margin="0,0,0,16"
-                               Foreground="#777"/>
+                               Foreground="#555"/>
 
                     <!-- Bouton toggle -->
                     <Button x:Name="ToggleBtn"
@@ -94,11 +87,11 @@
                             Width="200"
                             Click="ToggleBtn_Click"/>
 
-                    <TextBlock x:Name="HotkeyLabel"
-                               FontSize="11.5"
-                               HorizontalAlignment="Center"
-                               Margin="0,10,0,0"
-                               Foreground="#777"/>
+                    <!-- Veille automatique sur la plage horaire -->
+                    <CheckBox x:Name="AutoSleepCheck"
+                              HorizontalAlignment="Center"
+                              Margin="0,16,0,0"
+                              Click="AutoSleepCheck_Click"/>
                 </StackPanel>
             </Grid>
         </TabItem>
