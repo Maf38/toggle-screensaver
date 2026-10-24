@@ -4,16 +4,39 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
+    <!-- WinForms uniquement pour NotifyIcon (icône de zone de notification) -->
+    <UseWindowsForms>true</UseWindowsForms>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>ToggleScreensaver</AssemblyName>
     <RootNamespace>ToggleScreensaver</RootNamespace>
     <ApplicationIcon>sleep.ico</ApplicationIcon>
+    <!-- Version par défaut ; la CI la remplace par celle du tag (-p:Version=X.Y.Z) -->
+    <Version>1.0.0</Version>
+    <!-- WPF génère son propre Main() ; Velopack doit s'exécuter avant tout (hooks
+         d'installation / mise à jour / désinstallation), d'où notre Main dans App.xaml.cs. -->
+    <StartupObject>ToggleScreensaver.App</StartupObject>
   </PropertyGroup>
+
+  <ItemGroup>
+    <!-- App.xaml compilé comme Page (pas ApplicationDefinition) : sinon WPF génère un 2e Main() -->
+    <ApplicationDefinition Remove="App.xaml" />
+    <Page Include="App.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Évite les ambiguïtés WPF / WinForms (Application, Color, MessageBox...) -->
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+  </ItemGroup>
 
   <ItemGroup>
     <Resource Include="sleep.png" />
     <None Include="sleep.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Velopack" Version="1.2.158" />
   </ItemGroup>
 
 </Project>
