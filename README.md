@@ -5,6 +5,14 @@ de l'écran et du système en un clic.
 
 ![Marmotte endormie](sleep.png)
 
+## Télécharger
+
+[**⬇ Télécharger ToggleScreensaver.exe**](https://github.com/Maf38/toggle-screensaver/releases/latest/download/ToggleScreensaver.exe)
+
+Exécutable autonome pour Windows (x64), aucune installation de .NET requise.
+Il est reconstruit automatiquement à chaque mise à jour de la branche `main`
+(voir [`.github/workflows/release.yml`](.github/workflows/release.yml)).
+
 ## Fonctionnement
 
 L'application appelle l'API Win32 [`SetThreadExecutionState`](https://learn.microsoft.com/windows/win32/api/winbase/nf-winbase-setthreadexecutionstate) :
