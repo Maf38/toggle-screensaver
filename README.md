@@ -41,8 +41,13 @@ L'onglet **Paramètres** enregistre chaque changement immédiatement.
 | Plage horaire | Réactive la veille automatiquement sur une plage (21:30 → 05:30 par défaut, peut passer minuit, pas de 5 min). À la fin de la plage, l'état par défaut est rétabli. Un basculement manuel pendant la plage reste valable jusqu'à la prochaine borne. |
 | Raccourci clavier global | Bascule la veille depuis n'importe où (`Ctrl + Alt + S` par défaut). Un message s'affiche si la combinaison est déjà prise. |
 
+L'onglet **Principal** ne contient que l'essentiel : le bouton de bascule et la case
+« Veille automatique de 21h30 à 05h30 » (la même que la plage horaire ci-dessus). Case décochée,
+le bouton pilote la veille toute la journée ; cochée, la veille est réactivée automatiquement
+sur la plage. Cocher ou décocher la case ne modifie jamais l'état courant (hors entrée dans la plage).
+
 L'icône de la fenêtre et de la zone de notification change avec l'état : croissant de lune
-quand la veille est activée, soleil quand elle est désactivée.
+quand la veille est activée, écran avec un soleil quand elle est désactivée (écran toujours allumé).
 
 Les réglages sont stockés en JSON dans `%APPDATA%\ToggleScreensaver\settings.json`
 (un simple fichier suffit pour une poignée d'options ; SQLite serait disproportionné).

@@ -12,7 +12,8 @@ public sealed class SleepScheduler
     private readonly AppSettings _settings;
     private readonly SleepController _sleep;
     private readonly DispatcherTimer _timer;
-    private bool? _wasInWindow;
+    private bool _initialized;
+    private bool _wasInWindow;
 
     public SleepScheduler(AppSettings settings, SleepController sleep)
     {
@@ -26,13 +27,25 @@ public sealed class SleepScheduler
 
     /// <summary>
     /// Au premier appel (lancement), applique l'état initial : veille réactivée si on est
-    /// dans la plage, sinon l'état par défaut choisi dans les paramètres.
+    /// dans la plage, sinon l'état par défaut choisi dans les paramètres. Ensuite, n'agit
+    /// qu'aux franchissements de bornes ; plage désactivée, l'état courant n'est jamais touché.
     /// </summary>
     public void Evaluate()
     {
         var inWindow = _settings.IsInScheduleWindow(TimeOnly.FromDateTime(DateTime.Now));
-        if (_wasInWindow == inWindow) return;
 
+        if (_initialized)
+        {
+            if (_wasInWindow == inWindow) return;
+
+            if (!_settings.ScheduleEnabled)
+            {
+                _wasInWindow = false; // décochée : on ne touche pas à l'état courant
+                return;
+            }
+        }
+
+        _initialized = true;
         _wasInWindow = inWindow;
         _sleep.SetBlocked(inWindow ? false : _settings.BlockSleepOnStart);
     }
