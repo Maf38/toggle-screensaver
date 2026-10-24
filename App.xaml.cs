@@ -1,10 +1,25 @@
 using System.Threading;
 using System.Windows;
+using Velopack;
 
 namespace ToggleScreensaver;
 
 public partial class App : Application
 {
+    [STAThread]
+    private static void Main(string[] args)
+    {
+        // Doit s'exécuter avant tout le reste : gère les hooks d'installation, de mise à jour
+        // et de désinstallation (l'entrée de démarrage Windows est retirée à la désinstallation).
+        VelopackApp.Build()
+            .OnBeforeUninstallFastCallback(_ => StartupRegistration.Apply(false))
+            .Run();
+
+        var app = new App();
+        app.InitializeComponent();
+        app.Run();
+    }
+
     private const string MutexName = @"Local\ToggleScreensaver.SingleInstance";
     private const string ShowEventName = @"Local\ToggleScreensaver.Show";
 
@@ -17,6 +32,7 @@ public partial class App : Application
 
     public AppSettings Settings { get; private set; } = new();
     public SleepController Sleep { get; } = new();
+    public UpdateService Updates { get; } = new();
 
     /// <summary>Le raccourci demandé est déjà utilisé par une autre application.</summary>
     public bool HotkeyFailed { get; private set; }
@@ -52,6 +68,7 @@ public partial class App : Application
 
         ApplySettings(); // évalue aussi la plage horaire → état initial de la veille
         _scheduler.Start();
+        Updates.Start();
 
         var launchedAtLogon = e.Args.Contains(StartupRegistration.StartupArg);
         if (launchedAtLogon && Settings.ShowInTray) return; // démarre caché dans la zone de notification
@@ -103,6 +120,7 @@ public partial class App : Application
         _hotkey?.Dispose();
         _tray?.Dispose();
         _mutex?.Dispose();
+        Updates.ApplyOnExit();
         base.OnExit(e);
     }
 }

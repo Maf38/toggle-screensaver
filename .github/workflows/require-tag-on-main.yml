@@ -1,0 +1,30 @@
+name: Require version tag before merging to main
+
+# main représente toujours une version livrable : on ne fusionne dans main qu'un commit
+# qui porte déjà un tag vX.Y.Z. Le tag se pose sur develop AVANT d'ouvrir la PR vers main
+# (git tag v1.1.0 && git push origin v1.1.0) ; c'est lui qui déclenche la release.
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  check-tag:
+    runs-on: ubuntu-latest
+    steps:
+      # Sur pull_request, checkout récupère par défaut un commit de fusion synthétique qui
+      # n'a jamais de tag : on force le vrai commit de tête de la PR.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Vérifie qu'un tag vX.Y.Z pointe sur ce commit
+        shell: bash
+        run: |
+          tag=$(git tag --points-at HEAD | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -n1)
+          if [ -z "$tag" ]; then
+            echo "::error::Aucun tag vX.Y.Z ne pointe sur ce commit. Pousse le tag de version sur cette branche AVANT de fusionner vers main (ex. 'git tag v1.1.0 && git push origin v1.1.0')."
+            exit 1
+          fi
+          echo "OK : tag $tag trouvé sur ce commit."
