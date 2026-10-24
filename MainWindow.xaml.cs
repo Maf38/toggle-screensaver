@@ -43,6 +43,12 @@ public partial class MainWindow : Window
 
     private void ToggleBtn_Click(object sender, RoutedEventArgs e) => _app.Sleep.Toggle();
 
+    private void AutoSleepCheck_Click(object sender, RoutedEventArgs e)
+    {
+        _app.Settings.ScheduleEnabled = AutoSleepCheck.IsChecked == true;
+        SaveAndApply();
+    }
+
     private void UpdateUI()
     {
         var blocked = _app.Sleep.IsBlocked;
@@ -66,21 +72,11 @@ public partial class MainWindow : Window
         // Lune quand la veille est activée, soleil quand elle est désactivée
         Icon = IconFactory.GetWindowIcon(blocked);
 
-        if (settings.ScheduleEnabled && settings.ScheduleStart != settings.ScheduleEnd)
-        {
-            ScheduleLabel.Text = settings.IsInScheduleWindow(TimeOnly.FromDateTime(DateTime.Now))
-                ? $"🌙 Plage de veille en cours, jusqu'à {settings.ScheduleEnd:HH\\:mm}"
-                : $"🌙 Veille automatique à partir de {settings.ScheduleStart:HH\\:mm}";
-            ScheduleLabel.Visibility = Visibility.Visible;
-        }
-        else
-        {
-            ScheduleLabel.Visibility = Visibility.Collapsed;
-        }
+        // Case de l'onglet Principal et celle des Paramètres : même réglage
+        AutoSleepCheck.Content = $"Veille automatique de {settings.ScheduleStart:HH'h'mm} à {settings.ScheduleEnd:HH'h'mm}";
+        AutoSleepCheck.IsChecked = settings.ScheduleEnabled;
+        ScheduleCheck.IsChecked = settings.ScheduleEnabled;
 
-        HotkeyLabel.Text = settings.HotkeyEnabled && !_app.HotkeyFailed
-            ? HotkeyManager.Format(settings.HotkeyModifiers, settings.HotkeyKey)
-            : "";
         HotkeyWarning.Visibility = _app.HotkeyFailed ? Visibility.Visible : Visibility.Collapsed;
     }
 

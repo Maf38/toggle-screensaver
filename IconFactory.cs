@@ -8,8 +8,8 @@ using Forms = System.Windows.Forms;
 namespace ToggleScreensaver;
 
 /// <summary>
-/// Icônes dessinées à l'exécution : croissant de lune (veille activée) et soleil
-/// (veille désactivée, le PC reste éveillé).
+/// Icônes dessinées à l'exécution : croissant de lune (veille activée) et écran avec un
+/// soleil (veille désactivée, le PC reste éveillé).
 /// </summary>
 public static class IconFactory
 {
@@ -107,21 +107,25 @@ public static class IconFactory
         dc.DrawGeometry(Solid("#FFE082"), null, crescent);
     }
 
+    // Écran allumé avec un soleil : l'écran reste allumé en permanence
     private static void DrawSun(DrawingContext dc)
     {
-        dc.DrawEllipse(Solid("#4FC3F7"), null, new Point(50, 50), 48, 48);
+        var frame = Solid("#37474F");
+        dc.DrawRoundedRectangle(frame, null, new Rect(4, 10, 92, 64), 9, 9);              // cadre
+        dc.DrawRoundedRectangle(Solid("#4FC3F7"), null, new Rect(10, 16, 80, 52), 5, 5);  // dalle
+        dc.DrawRectangle(frame, null, new Rect(42, 74, 16, 10));                          // pied
+        dc.DrawRoundedRectangle(frame, null, new Rect(24, 82, 52, 9), 4, 4);              // socle
 
         var yellow = Solid("#FFD600");
-        var pen = new Pen(yellow, 7) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round };
+        var pen = new Pen(yellow, 5) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round };
         pen.Freeze();
         for (var i = 0; i < 8; i++)
         {
-            var angle = i * Math.PI / 4;
-            var (sin, cos) = Math.SinCos(angle);
+            var (sin, cos) = Math.SinCos(i * Math.PI / 4);
             dc.DrawLine(pen,
-                new Point(50 + 28 * cos, 50 + 28 * sin),
-                new Point(50 + 38 * cos, 50 + 38 * sin));
+                new Point(50 + 17 * cos, 42 + 17 * sin),
+                new Point(50 + 23 * cos, 42 + 23 * sin));
         }
-        dc.DrawEllipse(yellow, null, new Point(50, 50), 18, 18);
+        dc.DrawEllipse(yellow, null, new Point(50, 42), 11, 11);
     }
 }
